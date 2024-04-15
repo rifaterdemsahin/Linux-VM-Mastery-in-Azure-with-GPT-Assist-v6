@@ -1,44 +1,52 @@
-#!/bin/bash
+To install `conjure-up` on an Ubuntu system using Snap, you will follow a relatively straightforward process. `conjure-up` is a software provisioning tool that simplifies the deployment of complex software stacks using Juju. Here's how you can install it using Snap, the package management system that comes with Ubuntu:
 
-# Exit on any error
-set -e
+### Step-by-Step Installation
 
-# Ensure sudo is available
-if ! command -v sudo &> /dev/null; then
-    apt-get update
-    apt-get install -y sudo
-fi
+1. **Open your terminal**: You can do this by pressing `Ctrl + Alt + T` on your keyboard or by searching for "Terminal" in your application launcher.
 
-# Install Docker if not present
-if ! command -v docker &> /dev/null; then
-    echo "Installing Docker..."
-    sudo apt-get update
-    sudo apt-get install -y apt-transport-https ca-certificates curl software-properties-common
-    curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
-    sudo add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable"
-    sudo apt-get update
-    sudo apt-get install -y docker-ce
-    sudo systemctl start docker
-    sudo systemctl enable docker
-fi
+2. **Update your package list** (optional but recommended):
+   ```bash
+   sudo apt update
+   ```
 
-# Pull Ubuntu image if not already present
-if ! sudo docker images | grep -q ubuntu; then
-    echo "Pulling Ubuntu image..."
-    sudo docker pull ubuntu
-fi
+3. **Install Snap** (if it’s not already installed on your system):
+   ```bash
+   sudo apt install snapd
+   ```
 
-# Create Docker container if not already running
-if ! sudo docker ps | grep -q conjure_container; then
-    echo "Creating and starting Docker container..."
-    sudo docker run -itd --name conjure_container ubuntu
-    echo "Installing necessary packages in Docker container..."
-    sudo docker exec conjure_container apt-get update
-    sudo docker exec conjure_container apt-get install -y sudo snapd
-    sudo docker exec conjure_container snap install core
-    sudo docker exec conjure_container snap install conjure-up --classic
-fi
+4. **Install `conjure-up`**:
+   ```bash
+   sudo snap install conjure-up --classic
+   ```
 
-echo "Conjure-up installation complete. You can now use it inside the Docker container."
-echo "Access the container with: sudo docker exec -it conjure_container bash"
-echo "Inside the container, you can start conjure-up by simply running: conjure-up"
+   The `--classic` flag is necessary because `conjure-up` requires access to system resources that are outside of the security confinement that Snap typically provides.
+
+5. **Verify the installation**: Check if `conjure-up` is installed correctly by running:
+   ```bash
+   conjure-up --version
+   ```
+
+   This command should return the version of `conjure-up` that you have installed.
+
+### Additional Setup
+
+- **LXD Setup**: If you plan to deploy applications locally using LXD (a system container and virtual machine manager), you might need to install and set up LXD:
+  ```bash
+  sudo snap install lxd
+  sudo lxd init
+  ```
+  The `lxd init` command will guide you through the initial setup, which is important for creating containers on your machine.
+
+- **Juju Setup**: Since `conjure-up` leverages Juju, ensure Juju is installed and configured:
+  ```bash
+  sudo snap install juju --classic
+  juju bootstrap
+  ```
+
+  `juju bootstrap` initializes a Juju environment, which is necessary for deploying and managing applications through Juju.
+
+### Usage
+
+Once installed, you can start `conjure-up` by simply entering `conjure-up` in the terminal. It will guide you through deploying applications like Kubernetes, OpenStack, or even smaller test applications, depending on what's available in the spell list at that time.
+
+That’s it! You now have `conjure-up` installed on your Ubuntu system using Snap, and you can begin deploying complex software stacks with it.
