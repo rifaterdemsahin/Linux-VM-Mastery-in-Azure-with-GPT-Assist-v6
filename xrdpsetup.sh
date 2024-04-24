@@ -34,9 +34,6 @@ log_command "sudo apt-get update -y"
 # Install necessary utilities
 log_command "sudo apt install xclip -y"
 
-# Upgrade all installed packages in the background
-log_command "sudo apt-get upgrade -y &"
-
 # Install xrdp and configure it
 log_command "sudo apt-get install xrdp -y"
 
@@ -56,6 +53,9 @@ log_command "sudo apt-get install ubuntu-desktop -y"
 
 # Restart xrdp service
 log_command "sudo systemctl restart xrdp"
+
+# Upgrade all installed packages in the background
+log_command "sudo apt-get upgrade -y"
 
 # Log the reboot action
 echo "[$(date "+%Y-%m-%d %H:%M:%S")] ($USER) Logging reboot action..." | sudo tee -a $LOG_FILE
