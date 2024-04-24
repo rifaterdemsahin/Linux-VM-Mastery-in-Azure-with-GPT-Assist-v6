@@ -7,7 +7,7 @@ echo "[$(date "+%Y-%m-%d %H:%M:%S")] Starting script execution..." | sudo tee -a
 
 # Add xrdpsetup.sh to cron jobs at reboot
 echo "[$(date "+%Y-%m-%d %H:%M:%S")] Adding xrdpsetup.sh to cron jobs at reboot..." | sudo tee -a $LOG_FILE
-(crontab -l 2>/dev/null; echo "@reboot /path/to/xrdpsetup.sh") | crontab -
+(crontab -l 2>/dev/null; echo "@reboot /var/lib/waagent/custom-script/download/0/xrdpsetup.sh") | crontab -
 
 # Display current cron jobs
 echo "[$(date "+%Y-%m-%d %H:%M:%S")] Current cron jobs:" | sudo tee -a $LOG_FILE
