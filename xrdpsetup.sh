@@ -19,8 +19,10 @@ crontab -l | sudo tee -a $LOG_FILE
 # Function to log command outputs
 log_command() {
     echo "[$(date "+%Y-%m-%d %H:%M:%S")] ($USER) Running command: $1" | sudo tee -a $LOG_FILE
-    eval $1 2>&1 | sudo tee -a $LOG_FILE
-    if [ ${PIPESTATUS[0]} -ne 0 ]; then
+    eval $1 2>&1 | sudo tee -a $LOG_FILE &
+    PID=$!
+    wait $PID
+    if [ $? -ne 0 ]; then
         echo "[$(date "+%Y-%m-%d %H:%M:%S")] ($USER) Error: Command failed - '$1'" | sudo tee -a $LOG_FILE 1>&2
         exit 1
     fi
@@ -32,8 +34,8 @@ log_command "sudo apt-get update -y"
 # Install necessary utilities
 log_command "sudo apt install xclip -y"
 
-# Upgrade all installed packages
-log_command "sudo apt-get upgrade -y"
+# Upgrade all installed packages in the background
+log_command "sudo apt-get upgrade -y &"
 
 # Install xrdp and configure it
 log_command "sudo apt-get install xrdp -y"
